@@ -191,7 +191,6 @@
             animation: float-heart-burst 1.2s ease-out forwards;
         }
 
-        /* Reproductor MP3 (visible solo si falla el autoplay) */
         #music-fallback-btn {
             position: fixed;
             bottom: 20px;
@@ -213,9 +212,7 @@
             animation: pulseBtn 1.8s ease-in-out infinite;
         }
 
-        #music-fallback-btn:hover {
-            transform: scale(1.05);
-        }
+        #music-fallback-btn:hover { transform: scale(1.05); }
 
         @keyframes pulseBtn {
             0%, 100% { box-shadow: 0 6px 20px rgba(225, 29, 72, 0.4); }
@@ -271,8 +268,6 @@
         <div class="big-heart-bg" style="top: 30%; right: 40%; animation-delay: 2.2s;">&#10084;</div>
     </div>
 
-    <!-- Reproductor de música MP3 -->
-    <!-- IMPORTANTE: cambia "cancion.mp3" por el nombre exacto de tu archivo -->
     <audio id="bg-music" loop preload="auto">
         <source src="cancion.mp3" type="audio/mpeg">
         <source src="./cancion.mp3" type="audio/mpeg">
@@ -280,7 +275,6 @@
         <source src="music.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Botón de respaldo para activar la música -->
     <button id="music-fallback-btn">
         <span id="music-btn-text">Activar música</span>
     </button>
@@ -455,22 +449,15 @@
         // ============================================================
         const bgMusic = document.getElementById('bg-music');
         const musicFallbackBtn = document.getElementById('music-fallback-btn');
-        const musicBtnText = document.getElementById('music-btn-text');
         let musicStarted = false;
         let fallbackTimer = null;
 
-        // Diagnóstico: verificar si el archivo carga
         bgMusic.addEventListener('loadedmetadata', () => {
             console.log('✅ MP3 cargado correctamente. Duración:', bgMusic.duration, 'segundos');
         });
 
         bgMusic.addEventListener('error', (e) => {
-            console.error('❌ Error al cargar el MP3. Verifica:');
-            console.error('   1. Que el archivo esté en la misma carpeta que el index.html');
-            console.error('   2. Que el nombre coincida EXACTAMENTE (mayúsculas/minúsculas importan)');
-            console.error('   3. Que no tenga espacios ni acentos en el nombre');
-            console.error('   Error:', e);
-            // Mostrar botón de respaldo
+            console.error('❌ Error al cargar el MP3. Verifica el nombre y la ruta del archivo.');
             musicFallbackBtn.style.display = 'flex';
         });
 
@@ -487,8 +474,7 @@
                     if (fallbackTimer) clearTimeout(fallbackTimer);
                     console.log('🎵 Música reproduciéndose correctamente');
                 }).catch((error) => {
-                    console.warn('⚠️ No se pudo reproducir automáticamente:', error.name, error.message);
-                    // Mostrar botón de respaldo después de 1 segundo si no funciona
+                    console.warn('⚠️ No se pudo reproducir automáticamente:', error.name);
                     if (fallbackTimer) clearTimeout(fallbackTimer);
                     fallbackTimer = setTimeout(() => {
                         if (!musicStarted) {
@@ -499,12 +485,10 @@
             }
         }
 
-        // Reintentar en CADA interacción hasta que suene
         document.addEventListener('click', tryPlayMusic);
         document.addEventListener('touchstart', tryPlayMusic);
         document.addEventListener('keydown', tryPlayMusic);
 
-        // Botón de respaldo manual
         musicFallbackBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             musicStarted = false;
@@ -565,13 +549,25 @@
             }
         }
 
+        // ============================================================
+        // MOVER BOTÓN: solo un poquito desde su posición actual
+        // ============================================================
         function moveButtonToRandomPos(btn) {
+            // Si es la primera vez, capturamos su posición actual
             if (!btn.classList.contains('btn-relocated')) {
+                const rect = btn.getBoundingClientRect();
+                // Guardar la posición actual antes de cambiar a fixed
+                btn.dataset.baseX = rect.left;
+                btn.dataset.baseY = rect.top;
+                btn.dataset.baseW = rect.width;
+                btn.dataset.baseH = rect.height;
                 btn.classList.add('btn-relocated');
             }
 
             requestAnimationFrame(() => {
-                const padding = 30;
+                const padding = 20;
+                const maxOffset = 60; // Desplazamiento máximo de 60 píxeles
+
                 const rect = btn.getBoundingClientRect();
                 let btnWidth = rect.width;
                 let btnHeight = rect.height;
@@ -582,21 +578,34 @@
                     btnWidth = maxAllowedWidth;
                 }
 
-                const maxX = window.innerWidth - btnWidth - padding;
-                const maxY = window.innerHeight - btnHeight - padding;
+                // Posición actual (usando left/top reales si existen, sino los base)
+                let currentX = parseFloat(btn.style.left) || parseFloat(btn.dataset.baseX) || rect.left;
+                let currentY = parseFloat(btn.style.top) || parseFloat(btn.dataset.baseY) || rect.top;
+
+                // Generar desplazamiento pequeño aleatorio (-maxOffset a +maxOffset)
+                const offsetX = (Math.random() * 2 - 1) * maxOffset;
+                const offsetY = (Math.random() * 2 - 1) * maxOffset;
+
+                // Nueva posición candidata
+                let newX = currentX + offsetX;
+                let newY = currentY + offsetY;
+
+                // Límites de la pantalla
                 const minX = padding;
                 const minY = padding;
+                const maxX = window.innerWidth - btnWidth - padding;
+                const maxY = window.innerHeight - btnHeight - padding;
 
-                const safeMaxX = Math.max(minX, maxX);
-                const safeMaxY = Math.max(minY, maxY);
+                // Ajustar si se sale de los límites
+                newX = Math.max(minX, Math.min(newX, maxX));
+                newY = Math.max(minY, Math.min(newY, maxY));
 
-                const randomX = Math.floor(Math.random() * (safeMaxX - minX + 1)) + minX;
-                const randomY = Math.floor(Math.random() * (safeMaxY - minY + 1)) + minY;
+                // Aplicar posición
+                btn.style.left = `${newX}px`;
+                btn.style.top = `${newY}px`;
 
-                btn.style.left = `${randomX}px`;
-                btn.style.top = `${randomY}px`;
-
-                spawnHeartBurst(randomX + btnWidth / 2, randomY + btnHeight / 2);
+                // Explosión de corazones en el centro del botón
+                spawnHeartBurst(newX + btnWidth / 2, newY + btnHeight / 2);
             });
         }
 
