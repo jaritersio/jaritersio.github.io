@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Carolina, ¿te quieres casar conmigo?</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Great+Vibes&family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#ffe4e6,#fecdd3 50%,#fda4af);background-size:200% 200%;animation:bg 12s ease infinite;min-height:100vh;overflow-x:hidden;touch-action:manipulation}
+@keyframes bg{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+.hand{font-family:'Great Vibes',cursive}.play{font-family:'Fredoka',sans-serif}
+.card{background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border:2px solid #fff;box-shadow:0 20px 40px rgba(225,29,72,.18)}
+#cv{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.fl{position:absolute;opacity:0;animation:up linear infinite;user-select:none}
+@keyframes up{0%{transform:translateY(110vh) rotate(0);opacity:0}10%,90%{opacity:.85}100%{transform:translateY(-20vh) rotate(360deg);opacity:0}}
+.star{position:absolute;width:4px;height:4px;background:#fff;border-radius:50%;box-shadow:0 0 8px 2px #fff;animation:tw 2.5s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.1;transform:scale(.5)}50%{opacity:1;transform:scale(1.4)}}
+.screen{display:none;opacity:0;transform:translateY(20px) scale(.96);transition:all .6s ease}
+.screen.on{display:block}.screen.show{opacity:1;transform:none}
+.trail,.ch{position:fixed;pointer-events:none;z-index:100;user-select:none}
+.trail{animation:tr .8s forwards}
+@keyframes tr{to{transform:translateY(25px) scale(0);opacity:0}}
+.ch{animation:chf 1.5s ease-out forwards;font-size:24px}
+@keyframes chf{to{transform:translate(var(--tx),var(--ty)) scale(.4) rotate(var(--r));opacity:0}}
+.pulse{animation:pu 2s infinite ease-in-out}@keyframes pu{50%{transform:scale(1.07)}}
+.beat{animation:hb 1.2s infinite}@keyframes hb{0%,100%{transform:scale(1)}15%{transform:scale(1.2)}30%{transform:scale(1)}45%{transform:scale(1.15)}}
+.bounce{animation:bo 1.4s infinite}@keyframes bo{50%{transform:translateY(-14px) rotate(-6deg)}}
+.shake{animation:sh .5s}@keyframes sh{20%,60%{transform:translateX(-12px)}40%,80%{transform:translateX(12px)}}
+.ring{filter:drop-shadow(0 0 18px #fbbf24);animation:rs 3s infinite ease-in-out}
+@keyframes rs{0%,100%{transform:rotate(-8deg) scale(1)}50%{transform:rotate(8deg) scale(1.15)}}
+.pop{animation:pp .5s}@keyframes pp{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
+.dot{width:10px;height:10px;border-radius:50%;background:#fecdd3;transition:.3s}.dot.a{background:#e11d48;transform:scale(1.4)}
+.glow{background:linear-gradient(90deg,#e11d48,#f472b6,#e11d48);background-size:200%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gl 3s linear infinite}
+@keyframes gl{to{background-position:200%}}
+#mbtn{position:fixed;bottom:20px;right:20px;z-index:9999;display:none;background:#e11d48;color:#fff;border-radius:50px;padding:12px 22px;font-weight:800}
+</style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 select-none">
+<canvas id="cv"></canvas><div id="fx"></div>
+<audio id="bg" loop preload="auto"><source src="cancion.mp3" type="audio/mpeg"></audio>
+<button id="mbtn">🎵 Activar música</button>
+
+<main class="relative z-10 w-full max-w-lg mx-auto text-center">
+
+<!-- 1 SOBRE -->
+<section id="s1" class="screen card rounded-3xl p-8">
+  <div class="text-8xl bounce mb-4">💌</div>
+  <h1 class="hand text-5xl glow mb-3">Carolina</h1>
+  <p id="typed" class="text-gray-700 font-bold min-h-[3.5rem] text-lg"></p>
+  <button id="open" class="mt-6 play font-bold text-xl text-white bg-gradient-to-r from-rose-500 to-pink-500 px-10 py-4 rounded-2xl shadow-lg pulse active:scale-95">Abrir 💌</button>
+</section>
+
+<!-- 2 RAZONES -->
+<section id="s2" class="screen card rounded-3xl p-8">
+  <p class="play text-rose-500 font-bold mb-2">Razones por las que te amo</p>
+  <div id="rn" class="hand text-6xl text-rose-600 mb-2">1</div>
+  <div id="rt" class="play text-2xl font-bold text-gray-700 min-h-[110px] flex items-center justify-center px-2"></div>
+  <div id="dots" class="flex justify-center gap-2 my-5"></div>
+  <button id="next" class="play font-bold text-lg text-white bg-gradient-to-r from-rose-500 to-pink-500 px-8 py-3 rounded-2xl shadow-lg active:scale-95">Siguiente 💖</button>
+</section>
+
+<!-- 3 PROPUESTA -->
+<section id="s3" class="screen card rounded-3xl p-6 md:p-10 relative">
+  <div class="relative w-44 h-44 mx-auto mb-3">
+    <div class="w-44 h-44 bg-rose-100 rounded-full border-4 border-rose-200 overflow-hidden flex items-center justify-center pulse">
+      <img id="cat" src="https://media.tenor.com/o7YPH8zGwHsAAAAe/gato-rogando.png" alt="Gato rogando" class="w-full h-full object-contain scale-125">
+    </div>
+    <span class="absolute -bottom-2 -right-2 text-5xl ring">💍</span>
+  </div>
+  <h1 class="hand text-5xl glow leading-tight">Carolina,</h1>
+  <h2 class="play text-3xl font-extrabold text-rose-600 mb-2">¿te quieres casar conmigo?</h2>
+  <p class="text-gray-600 font-semibold mb-4">Eres el amor de mi vida y mi mayor felicidad...</p>
+  <div id="badge" class="inline-block bg-rose-50 text-rose-500 font-bold text-sm px-4 py-1.5 rounded-full border border-rose-200 mb-5">Elige una opción mi amor</div>
+  <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+    <button id="yes" class="w-full sm:w-auto bg-gradient-to-r from-emerald-400 to-teal-500 text-white play font-bold text-xl px-8 py-4 rounded-2xl shadow-lg active:scale-95 transition-transform"><span id="yt">¡SÍ!</span></button>
+    <button id="no" class="w-full sm:w-auto bg-gradient-to-r from-rose-500 to-red-600 text-white play font-bold text-xl px-8 py-4 rounded-2xl shadow-lg active:scale-95 transition-transform"><span id="nt">NO</span></button>
+  </div>
+</section>
+
+<!-- 4 FINAL -->
+<section id="s4" class="screen card rounded-3xl p-6 md:p-8">
+  <div class="text-7xl ring mb-2">💍</div>
+  <h1 class="hand text-5xl glow mb-1">¡Dijo que SÍ!</h1>
+  <p class="play text-rose-600 font-bold text-xl mb-4">Carolina ❤ para siempre</p>
+  <div class="rounded-3xl overflow-hidden border-4 border-rose-200 shadow-xl mb-4 max-w-sm mx-auto bg-rose-50">
+    <img src="https://i.pinimg.com/474x/da/fe/4b/dafe4b674f37da8b9b56dfbff9dee17a.jpg" alt="Celebración" class="w-full h-auto" onerror="this.onerror=null;this.src='https://i.pinimg.com/736x/ee/76/79/ee7679e6b8a55c1c9906693c844458c4.jpg'">
+  </div>
+  <div class="p-4 bg-rose-50 rounded-2xl border border-rose-200 text-rose-700 font-bold shadow-inner">
+    <span class="beat inline-block">💖</span> ¡Juntos por siempre y para siempre! <span class="beat inline-block">💖</span>
+  </div>
+  <button id="again" class="mt-4 text-sm font-bold text-rose-400 underline">Ver fuegos artificiales otra vez 🎆</button>
+</section>
+</main>
+
+<!-- MODAL ENOJADO -->
+<div id="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-md">
+  <div class="card bg-white rounded-3xl p-6 max-w-md w-full text-center border-4 border-red-400 shake">
+    <h2 class="play text-3xl font-extrabold text-red-600 mb-2">¡¿CÓMO QUE NO?!</h2>
+    <div class="my-4 rounded-2xl overflow-hidden border-4 border-red-200 bg-rose-100">
+      <img src="https://i.pinimg.com/1200x/f2/8f/8b/f28f8ba088b0158a82ae4f8dcfe072ae.jpg" alt="Enojado" class="w-full h-auto" onerror="this.onerror=null;this.src='https://media.giphy.com/media/13CoXDiaCcCoyk/giphy.gif'">
+    </div>
+    <p class="text-red-700 font-extrabold mb-5 text-lg">¡Estás obligada a decir que SÍ!<br><span class="text-sm text-red-500 font-semibold">No hay otra opción, mi amor</span></p>
+    <button id="retry" class="w-full bg-gradient-to-r from-rose-500 to-pink-600 text-white play font-bold text-lg py-3 rounded-2xl shadow-lg active:scale-95">Está bien, diré que SÍ</button>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+// ---------- Fondo: elementos flotantes y estrellas ----------
+const fx=$('fx'), R=(a,b)=>Math.random()*(b-a)+a;
+const icons=['💌','💋','💕','💖','💞','❤️','🌹','🌸','✨','🦋'];
+for(let i=0;i<34;i++){const e=document.createElement('div');e.className='fl';e.textContent=icons[i%icons.length];
+ e.style.cssText=`left:${R(0,100)}vw;font-size:${R(18,34)}px;animation-duration:${R(12,26)}s;animation-delay:${R(0,16)}s`;fx.appendChild(e)}
+for(let i=0;i<30;i++){const s=document.createElement('div');s.className='star';
+ s.style.cssText=`left:${R(0,100)}vw;top:${R(0,100)}vh;animation-delay:${R(0,3)}s`;fx.appendChild(s)}
+
+// ---------- Corazones canvas ----------
+const cv=$('cv'),cx=cv.getContext('2d');let H=[];
+const rs=()=>{cv.width=innerWidth;cv.height=innerHeight};addEventListener('resize',rs);rs();
+const cols=['#f43f5e','#fb7185','#fda4af','#e11d48'];
+function mk(){return{x:R(0,cv.width),y:cv.height+R(0,100),s:R(8,22),v:R(.6,2),o:R(.3,.8),c:cols[Math.floor(R(0,4))],a:R(0,6),w:R(.02,.06)}}
+for(let i=0;i<45;i++)H.push(mk());
+function heart(h){const{x,y,s}=h,t=s*.3;cx.globalAlpha=h.o;cx.fillStyle=h.c;cx.beginPath();cx.moveTo(x,y+t);
+ cx.bezierCurveTo(x,y,x-s/2,y,x-s/2,y+t);cx.bezierCurveTo(x-s/2,y+(s+t)/2,x,y+s,x,y+s);
+ cx.bezierCurveTo(x,y+s,x+s/2,y+(s+t)/2,x+s/2,y+t);cx.bezierCurveTo(x+s/2,y,x,y,x,y+t);cx.fill()}
+(function loop(){cx.clearRect(0,0,cv.width,cv.height);H.forEach((h,i)=>{h.y-=h.v;h.a+=h.w;h.x+=Math.sin(h.a)*.6;if(h.y<-30)H[i]=mk();heart(h)});requestAnimationFrame(loop)})();
+
+// ---------- Estela y corazones al tocar ----------
+let lt=0;
+function trail(e){const n=Date.now();if(n-lt<50)return;lt=n;const p=e.touches?e.touches[0]:e;
+ const t=document.createElement('div');t.className='trail';t.textContent=['✨','💖','⭐','💗'][Math.floor(R(0,4))];
+ t.style.cssText=`left:${p.clientX}px;top:${p.clientY}px;font-size:${R(12,20)}px`;document.body.appendChild(t);setTimeout(()=>t.remove(),800)}
+addEventListener('mousemove',trail);addEventListener('touchmove',trail,{passive:true});
+addEventListener('click',e=>{for(let i=0;i<6;i++){const h=document.createElement('div');h.className='ch';
+ h.textContent=['❤️','💖','💕','💞','✨'][Math.floor(R(0,5))];const a=R(0,6.28),d=R(40,140);
+ h.style.cssText=`left:${e.clientX}px;top:${e.clientY}px;--tx:${Math.cos(a)*d}px;--ty:${Math.sin(a)*d}px;--r:${R(-180,180)}deg`;
+ document.body.appendChild(h);setTimeout(()=>h.remove(),1500)}});
+
+// ---------- Música ----------
+const bg=$('bg'),mb=$('mbtn');let playing=false;
+function music(){if(playing)return;bg.volume=.7;const p=bg.play();
+ if(p)p.then(()=>{playing=true;mb.style.display='none'}).catch(()=>{mb.style.display='block'})}
+mb.onclick=e=>{e.stopPropagation();music()};
+
+// ---------- Navegación de pantallas ----------
+let cur=null;
+function go(id){const out=cur;const inn=$(id);
+ const show=()=>{inn.classList.add('on');requestAnimationFrame(()=>requestAnimationFrame(()=>inn.classList.add('show')));cur=inn};
+ if(out){out.classList.remove('show');setTimeout(()=>{out.classList.remove('on');show()},500)}else show()}
+
+// ---------- Pantalla 1: texto que se escribe ----------
+const msg='Hay algo muy especial que necesito preguntarte... pero antes, ábrelo con cuidado.';
+go('s1');let k=0;
+(function ty(){if(k<=msg.length){$('typed').textContent=msg.slice(0,k++);setTimeout(ty,45)}})();
+$('open').onclick=()=>{confetti({particleCount:60,spread:70,origin:{y:.6},colors:['#f43f5e','#fda4af','#fff']});go('s2');showReason()};
+
+// ---------- Pantalla 2: razones ----------
+const reasons=['Tu sonrisa ilumina todos mis días ☀️','Contigo todo se siente mejor 💞','Eres mi lugar seguro y mi mejor amiga 🏡','Quiero todos mis mañanas a tu lado 🌅'];
+let ri=0;
+for(let i=0;i<reasons.length;i++){const d=document.createElement('div');d.className='dot';$('dots').appendChild(d)}
+function showReason(){$('rn').textContent=ri+1;const t=$('rt');t.textContent=reasons[ri];t.classList.remove('pop');void t.offsetWidth;t.classList.add('pop');
+ [...$('dots').children].forEach((d,i)=>d.classList.toggle('a',i===ri));
+ $('next').textContent=ri===reasons.length-1?'Continuar 💍':'Siguiente 💖'}
+$('next').onclick=()=>{if(ri<reasons.length-1){ri++;showReason();confetti({particleCount:25,spread:50,origin:{y:.7},scalar:.8,colors:['#f43f5e','#fda4af']})}else go('s3')};
+
+// ---------- Pantalla 3: propuesta ----------
+let nc=0,yc=0;
+const nm=['NO','¿En serio?','Piénsalo bien...','¡No me hagas esto!','¡Última oportunidad!'];
+const ym=['¡SÍ!','¿Estás segura bebé?','¿100% segurísima mi amor?','¡Acepto!'];
+const badge=['Elige una opción mi amor','Mmm... ¿segura? 🥺','Mira que el SÍ está muy bonito','Vamos, tú puedes 💕'];
+$('no').onclick=()=>{nc++;if(nc<5){$('nt').textContent=nm[nc];$('badge').textContent=badge[Math.min(nc,3)];
+  $('yes').style.transform=`scale(${1+nc*.08})`;$('no').style.transform=`scale(${1-nc*.06})`}else $('modal').classList.remove('hidden')};
+$('retry').onclick=()=>{$('modal').classList.add('hidden');nc=0;$('no').style.display='none';$('yes').style.transform='scale(1.1)';
+  $('cat').src='https://ih1.redbubble.net/image.5356383745.5149/pp,504x498-pad,600x600,f8f8f8.u1.jpg'};
+$('yes').onclick=()=>{yc++;if(yc<ym.length-0&&yc<3){$('yt').textContent=ym[yc];confetti({particleCount:20,spread:40,origin:{y:.8}})}else celebrate()};
+
+// ---------- Pantalla 4: celebración ----------
+let started=false;
+function fireworks(){const end=Date.now()+3500;
+ (function f(){confetti({particleCount:40,startVelocity:30,spread:360,ticks:70,origin:{x:R(.1,.9),y:R(.1,.5)},colors:['#f43f5e','#fbbf24','#fff','#ec4899','#fda4af']});
+  if(Date.now()<end)setTimeout(f,260)})()}
+function celebrate(){music();go('s4');
+ [[.25,{spread:26,startVelocity:55}],[.2,{spread:60}],[.35,{spread:100,decay:.91,scalar:.8}],[.2,{spread:120,startVelocity:45}]]
+  .forEach(([r,o])=>confetti({origin:{y:.7},particleCount:Math.floor(200*r),...o}));
+ fireworks();
+ if(started)return;started=true;
+ setInterval(()=>{confetti({particleCount:6,angle:60,spread:55,origin:{x:0},colors:['#f43f5e','#ec4899','#fda4af']});
+  confetti({particleCount:6,angle:120,spread:55,origin:{x:1},colors:['#f43f5e','#ec4899','#fda4af']})},800);
+ setInterval(()=>{const h=document.createElement('div');h.className='fl';h.textContent=['❤️','💌','💖','💕','🌹'][Math.floor(R(0,5))];
+  h.style.cssText=`left:${R(0,100)}vw;font-size:${R(20,34)}px;animation-duration:${R(4,7)}s`;fx.appendChild(h);setTimeout(()=>h.remove(),8000)},350)}
+$('again').onclick=fireworks;
+</script>
+</body>
+</html>
