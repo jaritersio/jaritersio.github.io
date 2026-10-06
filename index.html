@@ -40,8 +40,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#ffe4e6,#
 </head>
 <body class="flex items-center justify-center min-h-screen p-4 select-none">
 <canvas id="cv"></canvas><div id="fx"></div>
-<audio id="bg" loop preload="auto"><source src="cancion.mp3" type="audio/mpeg"></audio>
-<button id="mbtn">🎵 Activar música</button>
+<audio id="bg" loop preload="auto"><source src="cancion.mp3" type="audio/mpeg"><source src="./cancion.mp3" type="audio/mpeg"><source src="musica.mp3" type="audio/mpeg"><source src="music.mp3" type="audio/mpeg"></audio>
+<button id="mbtn">Activar música</button>
 
 <main class="relative z-10 w-full max-w-lg mx-auto text-center">
 
@@ -59,7 +59,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#ffe4e6,#
   <div id="rn" class="hand text-6xl text-rose-600 mb-2">1</div>
   <div id="rt" class="play text-2xl font-bold text-gray-700 min-h-[110px] flex items-center justify-center px-2"></div>
   <div id="dots" class="flex justify-center gap-2 my-5"></div>
-  <button id="next" class="play font-bold text-lg text-white bg-gradient-to-r from-rose-500 to-pink-500 px-8 py-3 rounded-2xl shadow-lg active:scale-95">Siguiente 💖</button>
+  <button id="next" class="play font-bold text-lg text-white bg-gradient-to-r from-rose-500 to-pink-500 px-8 py-3 rounded-2xl shadow-lg active:scale-95">Siguiente</button>
 </section>
 
 <!-- 3 PROPUESTA -->
@@ -68,7 +68,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#ffe4e6,#
     <div class="w-44 h-44 bg-rose-100 rounded-full border-4 border-rose-200 overflow-hidden flex items-center justify-center pulse">
       <img id="cat" src="https://media.tenor.com/o7YPH8zGwHsAAAAe/gato-rogando.png" alt="Gato rogando" class="w-full h-full object-contain scale-125">
     </div>
-    <span class="absolute -bottom-2 -right-2 text-5xl ring">💍</span>
+    
   </div>
   <h1 class="hand text-5xl glow leading-tight">Carolina,</h1>
   <h2 class="play text-3xl font-extrabold text-rose-600 mb-2">¿te quieres casar conmigo?</h2>
@@ -82,16 +82,16 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#ffe4e6,#
 
 <!-- 4 FINAL -->
 <section id="s4" class="screen card rounded-3xl p-6 md:p-8">
-  <div class="text-7xl ring mb-2">💍</div>
+  <div class="text-7xl beat mb-2">💌</div>
   <h1 class="hand text-5xl glow mb-1">¡Dijo que SÍ!</h1>
-  <p class="play text-rose-600 font-bold text-xl mb-4">Carolina ❤ para siempre</p>
+  <p class="play text-rose-600 font-bold text-xl mb-4">Carolina y Javier para siempre</p>
   <div class="rounded-3xl overflow-hidden border-4 border-rose-200 shadow-xl mb-4 max-w-sm mx-auto bg-rose-50">
     <img src="https://i.pinimg.com/474x/da/fe/4b/dafe4b674f37da8b9b56dfbff9dee17a.jpg" alt="Celebración" class="w-full h-auto" onerror="this.onerror=null;this.src='https://i.pinimg.com/736x/ee/76/79/ee7679e6b8a55c1c9906693c844458c4.jpg'">
   </div>
   <div class="p-4 bg-rose-50 rounded-2xl border border-rose-200 text-rose-700 font-bold shadow-inner">
-    <span class="beat inline-block">💖</span> ¡Juntos por siempre y para siempre! <span class="beat inline-block">💖</span>
+    ¡Juntos por siempre y para siempre!
   </div>
-  <button id="again" class="mt-4 text-sm font-bold text-rose-400 underline">Ver fuegos artificiales otra vez 🎆</button>
+  <button id="again" class="mt-4 text-sm font-bold text-rose-400 underline">Ver fuegos artificiales otra vez</button>
 </section>
 </main>
 
@@ -111,7 +111,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#ffe4e6,#
 const $=id=>document.getElementById(id);
 // ---------- Fondo: elementos flotantes y estrellas ----------
 const fx=$('fx'), R=(a,b)=>Math.random()*(b-a)+a;
-const icons=['💌','💋','💕','💖','💞','❤️','🌹','🌸','✨','🦋'];
+const icons=['💌'];
 for(let i=0;i<34;i++){const e=document.createElement('div');e.className='fl';e.textContent=icons[i%icons.length];
  e.style.cssText=`left:${R(0,100)}vw;font-size:${R(18,34)}px;animation-duration:${R(12,26)}s;animation-delay:${R(0,16)}s`;fx.appendChild(e)}
 for(let i=0;i<30;i++){const s=document.createElement('div');s.className='star';
@@ -131,18 +131,19 @@ function heart(h){const{x,y,s}=h,t=s*.3;cx.globalAlpha=h.o;cx.fillStyle=h.c;cx.b
 // ---------- Estela y corazones al tocar ----------
 let lt=0;
 function trail(e){const n=Date.now();if(n-lt<50)return;lt=n;const p=e.touches?e.touches[0]:e;
- const t=document.createElement('div');t.className='trail';t.textContent=['✨','💖','⭐','💗'][Math.floor(R(0,4))];
+ const t=document.createElement('div');t.className='trail';t.textContent='💌';
  t.style.cssText=`left:${p.clientX}px;top:${p.clientY}px;font-size:${R(12,20)}px`;document.body.appendChild(t);setTimeout(()=>t.remove(),800)}
 addEventListener('mousemove',trail);addEventListener('touchmove',trail,{passive:true});
 addEventListener('click',e=>{for(let i=0;i<6;i++){const h=document.createElement('div');h.className='ch';
- h.textContent=['❤️','💖','💕','💞','✨'][Math.floor(R(0,5))];const a=R(0,6.28),d=R(40,140);
+ h.textContent='💌';const a=R(0,6.28),d=R(40,140);
  h.style.cssText=`left:${e.clientX}px;top:${e.clientY}px;--tx:${Math.cos(a)*d}px;--ty:${Math.sin(a)*d}px;--r:${R(-180,180)}deg`;
  document.body.appendChild(h);setTimeout(()=>h.remove(),1500)}});
 
 // ---------- Música ----------
 const bg=$('bg'),mb=$('mbtn');let playing=false;
 function music(){if(playing)return;bg.volume=.7;const p=bg.play();
- if(p)p.then(()=>{playing=true;mb.style.display='none'}).catch(()=>{mb.style.display='block'})}
+ if(p)p.then(()=>{playing=true;mb.style.display='none'}).catch(()=>{
+  mb.textContent=bg.networkState===3?'No encuentro cancion.mp3':'Activar música';mb.style.display='block'})}
 mb.onclick=e=>{e.stopPropagation();music()};
 
 // ---------- Navegación de pantallas ----------
@@ -155,22 +156,22 @@ function go(id){const out=cur;const inn=$(id);
 const msg='Hay algo muy especial que necesito preguntarte... pero antes, ábrelo con cuidado.';
 go('s1');let k=0;
 (function ty(){if(k<=msg.length){$('typed').textContent=msg.slice(0,k++);setTimeout(ty,45)}})();
-$('open').onclick=()=>{confetti({particleCount:60,spread:70,origin:{y:.6},colors:['#f43f5e','#fda4af','#fff']});go('s2');showReason()};
+$('open').onclick=()=>{music();confetti({particleCount:60,spread:70,origin:{y:.6},colors:['#f43f5e','#fda4af','#fff']});go('s2');showReason()};
 
 // ---------- Pantalla 2: razones ----------
-const reasons=['Tu sonrisa ilumina todos mis días ☀️','Contigo todo se siente mejor 💞','Eres mi lugar seguro y mi mejor amiga 🏡','Quiero todos mis mañanas a tu lado 🌅'];
+const reasons=['Tu sonrisa ilumina todos mis días','Contigo todo se siente mejor','Eres mi lugar seguro y mi mejor amiga','Quiero todos mis mañanas a tu lado'];
 let ri=0;
 for(let i=0;i<reasons.length;i++){const d=document.createElement('div');d.className='dot';$('dots').appendChild(d)}
 function showReason(){$('rn').textContent=ri+1;const t=$('rt');t.textContent=reasons[ri];t.classList.remove('pop');void t.offsetWidth;t.classList.add('pop');
  [...$('dots').children].forEach((d,i)=>d.classList.toggle('a',i===ri));
- $('next').textContent=ri===reasons.length-1?'Continuar 💍':'Siguiente 💖'}
+ $('next').textContent=ri===reasons.length-1?'Continuar':'Siguiente'}
 $('next').onclick=()=>{if(ri<reasons.length-1){ri++;showReason();confetti({particleCount:25,spread:50,origin:{y:.7},scalar:.8,colors:['#f43f5e','#fda4af']})}else go('s3')};
 
 // ---------- Pantalla 3: propuesta ----------
 let nc=0,yc=0;
 const nm=['NO','¿En serio?','Piénsalo bien...','¡No me hagas esto!','¡Última oportunidad!'];
 const ym=['¡SÍ!','¿Estás segura bebé?','¿100% segurísima mi amor?','¡Acepto!'];
-const badge=['Elige una opción mi amor','Mmm... ¿segura? 🥺','Mira que el SÍ está muy bonito','Vamos, tú puedes 💕'];
+const badge=['Elige una opción mi amor','Mmm... ¿segura?','Mira que el SÍ está muy bonito','Vamos, tú puedes'];
 $('no').onclick=()=>{nc++;if(nc<5){$('nt').textContent=nm[nc];$('badge').textContent=badge[Math.min(nc,3)];
   $('yes').style.transform=`scale(${1+nc*.08})`;$('no').style.transform=`scale(${1-nc*.06})`}else $('modal').classList.remove('hidden')};
 $('retry').onclick=()=>{$('modal').classList.add('hidden');nc=0;$('no').style.display='none';$('yes').style.transform='scale(1.1)';
@@ -189,7 +190,7 @@ function celebrate(){music();go('s4');
  if(started)return;started=true;
  setInterval(()=>{confetti({particleCount:6,angle:60,spread:55,origin:{x:0},colors:['#f43f5e','#ec4899','#fda4af']});
   confetti({particleCount:6,angle:120,spread:55,origin:{x:1},colors:['#f43f5e','#ec4899','#fda4af']})},800);
- setInterval(()=>{const h=document.createElement('div');h.className='fl';h.textContent=['❤️','💌','💖','💕','🌹'][Math.floor(R(0,5))];
+ setInterval(()=>{const h=document.createElement('div');h.className='fl';h.textContent='💌';
   h.style.cssText=`left:${R(0,100)}vw;font-size:${R(20,34)}px;animation-duration:${R(4,7)}s`;fx.appendChild(h);setTimeout(()=>h.remove(),8000)},350)}
 $('again').onclick=fireworks;
 </script>
