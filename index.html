@@ -156,7 +156,15 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .btn-relocated { position: fixed !important; z-index: 99; }
+        /* Botón relocalizado: fijo, con ancho máximo para no salirse */
+        .btn-relocated {
+            position: fixed !important;
+            z-index: 99;
+            max-width: calc(100vw - 40px);
+            white-space: normal;
+            word-break: break-word;
+            text-align: center;
+        }
 
         @keyframes gentle-pulse {
             0%, 100% { transform: scale(1); }
@@ -508,28 +516,51 @@
             }
         }
 
+        // ============================================================
+        // MOVER BOTÓN SIN QUE SE SALGA DE LA PANTALLA
+        // ============================================================
         function moveButtonToRandomPos(btn) {
+            // Añadir clase de relocalizado (position: fixed)
             if (!btn.classList.contains('btn-relocated')) {
                 btn.classList.add('btn-relocated');
             }
 
-            const padding = 20;
-            const btnWidth = btn.offsetWidth || 160;
-            const btnHeight = btn.offsetHeight || 50;
+            // Esperar un frame para que el navegador actualice el layout
+            // (importante porque el texto puede haber cambiado y el ancho varía)
+            requestAnimationFrame(() => {
+                const padding = 30; // Margen de seguridad
+                const rect = btn.getBoundingClientRect();
+                let btnWidth = rect.width;
+                let btnHeight = rect.height;
 
-            const maxX = window.innerWidth - btnWidth - padding;
-            const maxY = window.innerHeight - btnHeight - padding;
+                // Si el botón es más ancho que la pantalla, limitar su ancho
+                const maxAllowedWidth = window.innerWidth - padding * 2;
+                if (btnWidth > maxAllowedWidth) {
+                    btn.style.maxWidth = maxAllowedWidth + 'px';
+                    btnWidth = maxAllowedWidth;
+                }
 
-            const minX = padding;
-            const minY = padding;
+                // Calcular límites
+                const maxX = window.innerWidth - btnWidth - padding;
+                const maxY = window.innerHeight - btnHeight - padding;
+                const minX = padding;
+                const minY = padding;
 
-            const randomX = Math.max(minX, Math.floor(Math.random() * (maxX - minX + 1)) + minX);
-            const randomY = Math.max(minY, Math.floor(Math.random() * (maxY - minY + 1)) + minY);
+                // Asegurar que los límites sean válidos
+                const safeMaxX = Math.max(minX, maxX);
+                const safeMaxY = Math.max(minY, maxY);
 
-            btn.style.left = `${randomX}px`;
-            btn.style.top = `${randomY}px`;
+                // Generar posición aleatoria dentro de los límites
+                const randomX = Math.floor(Math.random() * (safeMaxX - minX + 1)) + minX;
+                const randomY = Math.floor(Math.random() * (safeMaxY - minY + 1)) + minY;
 
-            spawnHeartBurst(randomX + btnWidth / 2, randomY + btnHeight / 2);
+                // Aplicar posición
+                btn.style.left = `${randomX}px`;
+                btn.style.top = `${randomY}px`;
+
+                // Explosión de corazones en el centro del botón
+                spawnHeartBurst(randomX + btnWidth / 2, randomY + btnHeight / 2);
+            });
         }
 
         function spawnHeartBurst(x, y) {
